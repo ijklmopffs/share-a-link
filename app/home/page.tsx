@@ -24,7 +24,7 @@ export default function Homepage() {
             className={`flex items-center gap-2 ${
               navState === "links"
                 ? "border-2 bg-lightPurple text-purple font-bold py-2 px-5 rounded-md"
-                : ""
+                : "hover:text-purple hover:font-bold"
             }`}
             onClick={() => handleEventClick("links")}
           >
@@ -43,7 +43,7 @@ export default function Homepage() {
             className={`flex items-center gap-2 ${
               navState === "profile"
                 ? "border-2 bg-lightPurple text-purple font-bold py-2 px-4 rounded-md"
-                : ""
+                : "hover:text-purple hover:font-bold"
             }`}
             onClick={() => handleEventClick("profile")}
           >
@@ -63,7 +63,7 @@ export default function Homepage() {
           </button>
         </div>
 
-        <button className="text-purple border-2 border-purple py-2 px-4 rounded-md font-semibold">
+        <button className="text-purple border-2 border-purple py-2 px-4 rounded-md font-semibold hover:bg-lightPurple">
           <span className="hidden md:inline-block">Preview</span>
           <Image src={iconPreview} alt="" className="md:hidden" />
         </button>

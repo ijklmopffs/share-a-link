@@ -39,7 +39,6 @@ export default function Home() {
 
     try {
       await signInWithEmailAndPassword(auth, email, password);
-      console.log("Signed in successfully");
       router.push("/home");
     } catch (error: any) {
       console.log(error.message);
@@ -69,7 +68,7 @@ export default function Home() {
               id="email"
               className={`${
                 emailError !== "" ? "border-errorRed" : "border-borders"
-              }  rounded-md p-2 bg-white border-2 focus:outline-none text-darkGrey text-sm`}
+              }  rounded-md p-2 bg-white border-2 focus:outline-none text-darkGrey text-sm focus:border-purple focus:border-2`}
               placeholder="e.g. alex@email.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
@@ -90,19 +89,19 @@ export default function Home() {
               id="password"
               className={`${
                 passwordError !== "" ? "border-errorRed" : "border-borders"
-              }  rounded-md p-2 bg-white border-2 focus:outline-none text-darkGrey text-sm`}
+              }  rounded-md p-2 bg-white border-2 focus:outline-none text-darkGrey text-sm focus:border-purple focus:border-2`}
               placeholder="Enter your password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
             />
             <p className="text-errorRed text-xs">{passwordError}</p>
           </div>
-          <button className="bg-purple text-white rounded-md py-2 font-semibold">
+          <button className="bg-purple text-white rounded-md py-2 font-semibold hover:bg-purpleHover">
             Login
           </button>
           <p className="text-center text-grey">
             Don’t have an account?{" "}
-            <Link className="text-purple underline" href="/create-account">
+            <Link className="text-purple" href="/create-account">
               Create account
             </Link>
           </p>

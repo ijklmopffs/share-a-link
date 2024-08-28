@@ -1,9 +1,21 @@
+import { useState } from "react";
 import Image from "next/image";
 import phoneIllustrator from "@/public/assets/images/illustration-phone-mockup.svg";
 import phoneIllustrator2 from "@/public/assets/images/illustration-empty.svg";
 import uploadIcon from "@/public/assets/images/icon-upload-image.svg";
+import LinkInput from "./LinkInput";
 
 export default function LinksComponent({ navState }: any) {
+  const [linkInputs, setLinkInputs] = useState<number[]>([]);
+
+  const handleAddLinkInput = () => {
+    setLinkInputs([...linkInputs, linkInputs.length + 1]);
+  };
+
+  const removeLinkInput = () => {
+    setLinkInputs((prevLinkInputs) => prevLinkInputs.slice(0, -1));
+  };
+
   return (
     <main className="mt-6 flex justify-between gap-10">
       <div className="bg-white rounded-md p-6 w-[45%] hidden lg:block">
@@ -19,21 +31,35 @@ export default function LinksComponent({ navState }: any) {
               Add/edit/remove links below and then share all your profiles with
               the world!
             </p>
-            <button className="w-full border-2 border-purple rounded-md py-2 text-purple font-semibold">
-              Add new link
+            <button
+              onClick={handleAddLinkInput}
+              className="w-full border-2 border-purple rounded-md py-2 text-purple font-semibold hover:bg-lightPurple"
+            >
+              + Add new link
             </button>
-
-            <div className="bg-lightGrey my-10 rounded-md p-8 text-center">
-              <Image src={phoneIllustrator2} alt="" className="mx-auto" />
-              <h2 className="text-4xl text-darkGrey font-bold my-10">
-                Let’s get you started
-              </h2>
-              <p className="text-grey w-auto md:w-96 mx-auto my-10">
-                Use the “Add new link” button to get started. Once you have more
-                than one link, you can reorder and edit them. We’re here to help
-                you share your profiles with everyone!
-              </p>
-            </div>
+            {linkInputs.length === 0 ? (
+              <div className="bg-lightGrey my-10 rounded-md p-8 text-center">
+                <Image src={phoneIllustrator2} alt="" className="mx-auto" />
+                <h2 className="text-4xl text-darkGrey font-bold my-10">
+                  Let’s get you started
+                </h2>
+                <p className="text-grey w-auto md:w-96 mx-auto my-10">
+                  Use the “Add new link” button to get started. Once you have
+                  more than one link, you can reorder and edit them. We’re here
+                  to help you share your profiles with everyone!
+                </p>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {linkInputs.map((inputNumber) => (
+                  <LinkInput
+                    key={inputNumber}
+                    count={inputNumber}
+                    removeLinkInput={removeLinkInput}
+                  />
+                ))}
+              </div>
+            )}
           </>
         )}
 
@@ -110,9 +136,9 @@ export default function LinksComponent({ navState }: any) {
           </>
         )}
 
-        <hr />
+        <hr className="my-5" />
         <div className="flex justify-end">
-          <button className="bg-lightPurple mt-5 flex text-white rounded-md border-2 py-2 px-3">
+          <button className="bg-lightPurple mt-5 flex text-white rounded-md border-2 py-2 px-3 hover:bg-purpleHover">
             Save
           </button>
         </div>

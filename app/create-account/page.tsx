@@ -70,7 +70,7 @@ export default function CreateAccount() {
               id="email"
               className={`${
                 emailError !== "" ? "border-errorRed" : "border-borders"
-              }  rounded-md p-2 bg-white border-2 focus:outline-none text-darkGrey text-sm`}
+              }  rounded-md p-2 bg-white border-2 focus:outline-none text-darkGrey text-sm focus:border-purple focus:border-2`}
               placeholder="e.g. alex@email.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
@@ -92,7 +92,7 @@ export default function CreateAccount() {
               id="password"
               className={`${
                 passwordError !== "" ? "border-errorRed" : "border-borders"
-              }  rounded-md p-2 bg-white border-2 focus:outline-none text-darkGrey text-sm`}
+              }  rounded-md p-2 bg-white border-2 focus:outline-none text-darkGrey text-sm focus:border-purple focus:border-2`}
               placeholder="At least 8 characters"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
@@ -107,7 +107,7 @@ export default function CreateAccount() {
             <input
               type="password"
               id="confirmPassword"
-              className="border-borders rounded-md p-2 bg-white border-2 focus:outline-none text-darkGrey text-sm"
+              className="border-borders rounded-md p-2 bg-white border-2 focus:outline-none text-darkGrey text-sm focus:border-purple focus:border-2"
               placeholder="At least 8 characters"
               value={confirmed}
               onChange={(e) => setConfirmed(e.target.value)}
@@ -118,12 +118,12 @@ export default function CreateAccount() {
             Password must contain at least 8 characters
           </p>
 
-          <button className="bg-purple text-white rounded-md py-2 font-semibold">
+          <button className="bg-purple hover:bg-purpleHover text-white rounded-md py-2 font-semibold">
             Create new account
           </button>
           <p className="text-center text-grey">
             Already have an account?{" "}
-            <Link className="text-purple underline" href="/">
+            <Link className="text-purple" href="/">
               Login
             </Link>
           </p>
