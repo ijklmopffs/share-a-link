@@ -14,7 +14,12 @@ export default function LinksComponent({ navState }: any) {
   const [linkInputs, setLinkInputs] = useState<
     {
       id: number;
-      selectedOption: { label: string; logo: string; bgColor?: string };
+      selectedOption: {
+        label: string;
+        logo: string;
+        optionImg: string;
+        bgColor?: string;
+      };
       inputValue: string;
     }[]
   >([]);
@@ -31,7 +36,7 @@ export default function LinksComponent({ navState }: any) {
 
   const handleOptionClick = (
     id: number,
-    option: { label: string; logo: string; bgColor: string }
+    option: { label: string; logo: string; bgColor: string; optionImg: string }
   ) => {
     setLinkInputs((prev) =>
       prev.map((input) =>
@@ -63,6 +68,7 @@ export default function LinksComponent({ navState }: any) {
           label: "GitHub",
           logo: githubLogo,
           bgColor: "bg-black",
+          optionImg: githubWhite,
         },
         inputValue: "",
       },
@@ -109,7 +115,7 @@ export default function LinksComponent({ navState }: any) {
                 className={`${input.selectedOption.bgColor} text-white text-xs w-[230px] h-12 px-1 flex justify-between rounded-lg`}
               >
                 <div className="flex items-center gap-2">
-                  <Image src={input.selectedOption.logo} alt="" />
+                  <Image src={input.selectedOption.optionImg} alt="" />
                   <p>{input.selectedOption.label}</p>
                 </div>
                 <Image src={arrowRight} alt="" />

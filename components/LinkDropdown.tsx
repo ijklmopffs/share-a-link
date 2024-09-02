@@ -1,18 +1,31 @@
 import Image from "next/image";
 import githubLogo from "@/public/assets/images/icon-github.svg";
+import githubWhite from "@/public/assets/images/icon-github-white.svg";
 import youtube from "@/public/assets/images/icon-youtube.svg";
+import youtubeWhite from "@/public/assets/images/icon-youtube-white.svg";
 import twitter from "@/public/assets/images/icon-twitter.svg";
+import twitterWhite from "@/public/assets/images/icon-twitter-white.svg";
 import linkedin from "@/public/assets/images/icon-linkedin.svg";
+import linkedinWhite from "@/public/assets/images/icon-linkedin-white.svg";
 import facebook from "@/public/assets/images/icon-facebook.svg";
+import facebookWhite from "@/public/assets/images/icon-facebook-white.svg";
 import frontendmentor from "@/public/assets/images/icon-frontend-mentor.svg";
 import twitch from "@/public/assets/images/icon-twitch.svg";
+import twitchWhite from "@/public/assets/images/icon-twitch-white.svg";
 import devto from "@/public/assets/images/icon-devto.svg";
+import devtoWhite from "@/public/assets/images/icon-devto-white.svg";
 import codewars from "@/public/assets/images/icon-codewars.svg";
+import codewarsWhite from "@/public/assets/images/icon-codewars-white.svg";
 import codepen from "@/public/assets/images/icon-codepen.svg";
+import codepenWhite from "@/public/assets/images/icon-codepen-white.svg";
 import freecodecamp from "@/public/assets/images/icon-freecodecamp.svg";
+import freecodecampWhite from "@/public/assets/images/icon-freecodecamp-white.svg";
 import gitlab from "@/public/assets/images/icon-gitlab.svg";
+import gitlabWhite from "@/public/assets/images/icon-gitlab-white.svg";
 import hashnode from "@/public/assets/images/icon-hashnode.svg";
+import hashnodeWhite from "@/public/assets/images/icon-hashnode-white.svg";
 import stackoverflow from "@/public/assets/images/icon-stack-overflow.svg";
+import stackoverflowWhite from "@/public/assets/images/icon-stack-overflow-white.svg";
 
 export default function LinkDropdown({ handleOptionClick }: any) {
   return (
@@ -25,6 +38,7 @@ export default function LinkDropdown({ handleOptionClick }: any) {
               label: "GitHub",
               logo: githubLogo,
               bgColor: "bg-black",
+              optionImg: githubWhite,
             })
           }
         >
@@ -39,6 +53,7 @@ export default function LinkDropdown({ handleOptionClick }: any) {
               label: "YouTube",
               logo: youtube,
               bgColor: "bg-[rgb(238,58,58)]",
+              optionImg: youtubeWhite,
             })
           }
         >
@@ -53,6 +68,7 @@ export default function LinkDropdown({ handleOptionClick }: any) {
               label: "Twitter",
               logo: twitter,
               bgColor: "bg-[rgb(68,183,233)]",
+              optionImg: twitterWhite,
             })
           }
         >
@@ -67,6 +83,7 @@ export default function LinkDropdown({ handleOptionClick }: any) {
               label: "LinkedIn",
               logo: linkedin,
               bgColor: "bg-[rgb(46,105,255)]",
+              optionImg: linkedinWhite,
             })
           }
         >
@@ -81,6 +98,7 @@ export default function LinkDropdown({ handleOptionClick }: any) {
               label: "Facebook",
               logo: facebook,
               bgColor: "bg-[rgb(36,65,174)]",
+              optionImg: facebookWhite,
             })
           }
         >
@@ -109,6 +127,7 @@ export default function LinkDropdown({ handleOptionClick }: any) {
               label: "Twitch",
               logo: twitch,
               bgColor: "bg-[rgb(238,63,200)]",
+              optionImg: twitchWhite,
             })
           }
         >
@@ -123,6 +142,7 @@ export default function LinkDropdown({ handleOptionClick }: any) {
               label: "Devto",
               logo: devto,
               bgColor: "bg-[rgb(51,51,51)]",
+              optionImg: devtoWhite,
             })
           }
         >
@@ -137,6 +157,7 @@ export default function LinkDropdown({ handleOptionClick }: any) {
               label: "Codewars",
               logo: codewars,
               bgColor: "bg-[rgb(137,26,80)]",
+              optionImg: codewarsWhite,
             })
           }
         >
@@ -151,6 +172,7 @@ export default function LinkDropdown({ handleOptionClick }: any) {
               label: "Codepen",
               logo: codepen,
               bgColor: "bg-[rgb(26,137,72)]",
+              optionImg: codepenWhite,
             })
           }
         >
@@ -165,6 +187,7 @@ export default function LinkDropdown({ handleOptionClick }: any) {
               label: "freeCodeCamp",
               logo: freecodecamp,
               bgColor: "bg-[rgb(48,34,103)]",
+              optionImg: freecodecampWhite,
             })
           }
         >
@@ -179,6 +202,7 @@ export default function LinkDropdown({ handleOptionClick }: any) {
               label: "GitLab",
               logo: gitlab,
               bgColor: "bg-[rgb(235,72,36)]",
+              optionImg: gitlabWhite,
             })
           }
         >
@@ -193,6 +217,7 @@ export default function LinkDropdown({ handleOptionClick }: any) {
               label: "Hashnode",
               logo: hashnode,
               bgColor: "bg-[rgb(2,48,212)]",
+              optionImg: hashnodeWhite,
             })
           }
         >
@@ -207,6 +232,7 @@ export default function LinkDropdown({ handleOptionClick }: any) {
               label: "Stack Overflow",
               logo: stackoverflow,
               bgColor: "bg-[rgb(235,113,0)]",
+              optionImg: stackoverflowWhite,
             })
           }
         >
