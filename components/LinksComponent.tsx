@@ -1,25 +1,122 @@
 import { useState } from "react";
 import Image from "next/image";
+import { db } from "@/app/lib/firebase";
+import { collection, addDoc } from "firebase/firestore";
 import phoneIllustrator from "@/public/assets/images/illustration-phone-mockup.svg";
 import phoneIllustrator2 from "@/public/assets/images/illustration-empty.svg";
 import uploadIcon from "@/public/assets/images/icon-upload-image.svg";
+import githubLogo from "@/public/assets/images/icon-github.svg";
+import githubWhite from "@/public/assets/images/icon-github-white.svg";
+import arrowRight from "@/public/assets/images/icon-arrow-right.svg";
 import LinkInput from "./LinkInput";
 
 export default function LinksComponent({ navState }: any) {
-  const [linkInputs, setLinkInputs] = useState<number[]>([]);
+  const [linkInputs, setLinkInputs] = useState<
+    {
+      id: number;
+      selectedOption: { label: string; logo: string; bgColor?: string };
+      inputValue: string;
+    }[]
+  >([]);
+  const [dropdown, setDropdown] = useState<{ [key: number]: boolean }>({});
+  const [inputValue, setInputValue] = useState("");
 
-  const handleAddLinkInput = () => {
-    setLinkInputs([...linkInputs, linkInputs.length + 1]);
+  const handleDropdown = (
+    id: number,
+    e: React.MouseEvent<HTMLButtonElement>
+  ) => {
+    e.preventDefault();
+    setDropdown((prev) => ({ ...prev, [id]: !prev[id] }));
   };
 
-  const removeLinkInput = () => {
-    setLinkInputs((prevLinkInputs) => prevLinkInputs.slice(0, -1));
+  const handleOptionClick = (
+    id: number,
+    option: { label: string; logo: string; bgColor: string }
+  ) => {
+    setLinkInputs((prev) =>
+      prev.map((input) =>
+        input.id === id ? { ...input, selectedOption: option } : input
+      )
+    );
+    setDropdown((prev) => ({ ...prev, [id]: !prev[id] }));
+  };
+
+  const handleInputChange = (
+    id: number,
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const value = e.target.value;
+    setLinkInputs((prev) =>
+      prev.map((input) =>
+        input.id === id ? { ...input, inputValue: value } : input
+      )
+    );
+  };
+
+  const handleAddLinkInput = () => {
+    const newId = Date.now();
+    setLinkInputs((prev) => [
+      ...prev,
+      {
+        id: newId,
+        selectedOption: {
+          label: "GitHub",
+          logo: githubLogo,
+          bgColor: "bg-black",
+        },
+        inputValue: "",
+      },
+    ]);
+    setDropdown((prev) => ({ ...prev, [newId]: false }));
+  };
+
+  const removeLinkInput = (id: number) => {
+    setLinkInputs((prev) => prev.filter((input) => input.id !== id));
+    setDropdown((prev) => {
+      const newDropdowns = { ...prev };
+      delete newDropdowns[id];
+      return newDropdowns;
+    });
+  };
+
+  const saveToFirestore = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+
+    linkInputs.forEach((input) => {
+      addDoc(collection(db, "users"), {
+        selectedOption: input.selectedOption.label,
+        logo: input.selectedOption.logo,
+        inputValue: input.inputValue,
+      })
+        .then((docRef) => {
+          console.log("Document written with ID: ", docRef.id);
+        })
+        .catch((error) => {
+          console.error("Error adding document: ", error);
+        });
+    });
   };
 
   return (
     <main className="mt-6 flex justify-between gap-10">
-      <div className="bg-white rounded-md p-6 w-[45%] hidden lg:block">
+      <div className="bg-white rounded-md p-6 w-[45%] hidden lg:block relative">
         <Image src={phoneIllustrator} alt="" className="mx-auto" />
+        {linkInputs.length > 0 && (
+          <div className="absolute top-[25rem] left-[21rem] space-y-10">
+            {linkInputs.map((input, index) => (
+              <div
+                key={index}
+                className={`${input.selectedOption.bgColor} text-white text-xs w-[230px] h-12 px-1 flex justify-between rounded-lg`}
+              >
+                <div className="flex items-center gap-2">
+                  <Image src={input.selectedOption.logo} alt="" />
+                  <p>{input.selectedOption.label}</p>
+                </div>
+                <Image src={arrowRight} alt="" />
+              </div>
+            ))}
+          </div>
+        )}
       </div>
       <div className="bg-white rounded-md p-6 w-full lg:w-[55%]">
         {navState === "links" && (
@@ -51,15 +148,42 @@ export default function LinksComponent({ navState }: any) {
               </div>
             ) : (
               <div className="space-y-4">
-                {linkInputs.map((inputNumber) => (
+                {linkInputs.map((input) => (
                   <LinkInput
-                    key={inputNumber}
-                    count={inputNumber}
+                    key={input.id}
+                    id={input.id}
+                    selectedOption={input.selectedOption}
+                    dropdown={dropdown[input.id]}
+                    handleDropdown={(e: React.MouseEvent<HTMLButtonElement>) =>
+                      handleDropdown(input.id, e)
+                    }
+                    handleOptionClick={(option: any) =>
+                      handleOptionClick(input.id, option)
+                    }
+                    inputValue={input.inputValue}
+                    handleInputChange={(
+                      e: React.ChangeEvent<HTMLInputElement>
+                    ) => handleInputChange(input.id, e)}
                     removeLinkInput={removeLinkInput}
                   />
                 ))}
               </div>
             )}
+
+            <hr className="my-5" />
+            <div className="flex justify-end">
+              {/* {linkInputs.map((input) => ( */}
+              <button
+                // key={input.id}
+                onClick={saveToFirestore}
+                className={`${
+                  inputValue === "" ? "bg-lightPurple" : "bg-purple"
+                } mt-5 flex text-white rounded-md border-2 py-2 px-3 hover:bg-purpleHover`}
+              >
+                Save
+              </button>
+              {/* ))} */}
+            </div>
           </>
         )}
 
@@ -69,7 +193,7 @@ export default function LinksComponent({ navState }: any) {
               Profile Details
             </h1>
             <p className="text-grey my-5">
-              Add your details to create personal touch to your profile.
+              Add your details to create a personal touch to your profile.
             </p>
 
             <div className="bg-lightGrey my-10 rounded-md p-8 text-center flex flex-col md:flex-row md:items-center justify-between">
@@ -133,15 +257,19 @@ export default function LinksComponent({ navState }: any) {
                 </div>
               </form>
             </div>
+
+            <hr className="my-5" />
+            <div className="flex justify-end">
+              <button
+                className={`${
+                  inputValue === "" ? "bg-lightPurple" : "bg-purple"
+                } mt-5 flex text-white rounded-md border-2 py-2 px-3 hover:bg-purpleHover`}
+              >
+                lmao
+              </button>
+            </div>
           </>
         )}
-
-        <hr className="my-5" />
-        <div className="flex justify-end">
-          <button className="bg-lightPurple mt-5 flex text-white rounded-md border-2 py-2 px-3 hover:bg-purpleHover">
-            Save
-          </button>
-        </div>
       </div>
     </main>
   );

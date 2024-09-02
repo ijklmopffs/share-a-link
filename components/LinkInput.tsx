@@ -1,51 +1,20 @@
-import { useState } from "react";
 import Image from "next/image";
-import { db } from "@/app/lib/firebase";
-// import { collection } from "firebase/firestore";
-import { collection, addDoc } from "firebase/firestore";
 import iconDrag from "@/public/assets/images/icon-drag-and-drop.svg";
 import githubLogo from "@/public/assets/images/icon-github.svg";
 import arrowDown from "@/public/assets/images/icon-chevron-down.svg";
 import LinkDropdown from "./LinkDropdown";
 
-export default function LinkInput({ count, removeLinkInput }: any) {
-  const [dropdown, setDropdown] = useState(false);
-  const [selectedOption, setSelectedOption] = useState<{
-    label: string;
-    logo: string;
-  } | null>(null);
-  const [inputValue, setInputValue] = useState("");
-
-  const handleDropdown = (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault();
-    setDropdown(!dropdown);
-  };
-
-  const handleOptionClick = (option: { label: string; logo: string }) => {
-    setSelectedOption(option);
-    setDropdown(false);
-  };
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setInputValue(e.target.value);
-  };
-
-  const saveToFirestore = (e: any) => {
-    e.preventDefault();
-
-    addDoc(collection(db, "users"), {
-      selectedOption: selectedOption?.label,
-      logo: selectedOption?.logo,
-      inputValue: inputValue,
-    })
-      .then((docRef) => {
-        console.log("Document written with ID: ", docRef.id);
-      })
-      .catch((error) => {
-        console.error("Error adding document: ", error);
-      });
-  };
-
+export default function LinkInput({
+  id,
+  count,
+  removeLinkInput,
+  handleDropdown,
+  selectedOption,
+  dropdown,
+  handleOptionClick,
+  inputValue,
+  handleInputChange,
+}: any) {
   return (
     <main className="bg-lightGrey rounded-md p-6 my-5">
       <div className="flex items-center justify-between p-2">
@@ -62,6 +31,7 @@ export default function LinkInput({ count, removeLinkInput }: any) {
           <div>
             <button
               onClick={handleDropdown}
+              type="button"
               className="flex items-center justify-between bg-white border-2 border-borders w-full rounded-lg p-3"
             >
               <div className="flex items-center gap-2">
@@ -77,10 +47,7 @@ export default function LinkInput({ count, removeLinkInput }: any) {
             </button>
           </div>
           {dropdown && (
-            <LinkDropdown
-              handleOptionClick={handleOptionClick}
-              selectedOption={selectedOption}
-            />
+            <LinkDropdown id={id} handleOptionClick={handleOptionClick} />
           )}
         </div>
 
@@ -95,8 +62,6 @@ export default function LinkInput({ count, removeLinkInput }: any) {
             onChange={handleInputChange}
           />
         </div>
-
-        <button onClick={saveToFirestore}>save</button>
       </form>
     </main>
   );
