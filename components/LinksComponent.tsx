@@ -1,7 +1,9 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import Image from "next/image";
 import { db } from "@/app/lib/firebase";
 import { collection, addDoc } from "firebase/firestore";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import phoneIllustrator from "@/public/assets/images/illustration-phone-mockup.svg";
 import phoneIllustrator2 from "@/public/assets/images/illustration-empty.svg";
 import uploadIcon from "@/public/assets/images/icon-upload-image.svg";
@@ -9,6 +11,7 @@ import githubLogo from "@/public/assets/images/icon-github.svg";
 import githubWhite from "@/public/assets/images/icon-github-white.svg";
 import arrowRight from "@/public/assets/images/icon-arrow-right.svg";
 import LinkInput from "./LinkInput";
+import Link from "next/link";
 
 export default function LinksComponent({ navState }: any) {
   const [linkInputs, setLinkInputs] = useState<
@@ -25,6 +28,64 @@ export default function LinksComponent({ navState }: any) {
   >([]);
   const [dropdown, setDropdown] = useState<{ [key: number]: boolean }>({});
   const [inputValue, setInputValue] = useState("");
+  const [backgroundImage, setBackgroundImage] = useState<string | null>(null);
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [email, setEmail] = useState("");
+
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleDivClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+
+      reader.onload = (e) => {
+        const img = new window.Image();
+        img.src = e.target?.result as string;
+
+        img.onload = () => {
+          const maxSize = 1024;
+
+          if (img.width > maxSize || img.height > maxSize) {
+            alert("Image dimensions must be 1024x1024 pixels or smaller.");
+            return;
+          }
+          const canvas = document.createElement("canvas");
+
+          let width = img.width;
+          let height = img.height;
+
+          if (width > height) {
+            if (width > maxSize) {
+              height = (height * maxSize) / width;
+              width = maxSize;
+            }
+          } else {
+            if (height > maxSize) {
+              width = (width * maxSize) / height;
+              height = maxSize;
+            }
+          }
+
+          canvas.width = width;
+          canvas.height = height;
+
+          const ctx = canvas.getContext("2d");
+          ctx?.drawImage(img, 0, 0, width, height);
+
+          const dataUrl = canvas.toDataURL("image/jpeg");
+          setBackgroundImage(dataUrl);
+        };
+      };
+
+      reader.readAsDataURL(file);
+    }
+  };
 
   const handleDropdown = (
     id: number,
@@ -96,11 +157,58 @@ export default function LinksComponent({ navState }: any) {
       })
         .then((docRef) => {
           console.log("Document written with ID: ", docRef.id);
+          toast.success("Link has been saved successfully!", {
+            autoClose: 2000,
+            hideProgressBar: true,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+          });
         })
         .catch((error) => {
           console.error("Error adding document: ", error);
+          toast.error("Error saving links!", {
+            autoClose: 2000,
+            hideProgressBar: true,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+          });
         });
     });
+  };
+
+  const saveUserInfoToFirestore = async (
+    e: React.MouseEvent<HTMLButtonElement>
+  ) => {
+    e.preventDefault();
+
+    try {
+      await addDoc(collection(db, "user"), {
+        firstName,
+        lastName,
+        email,
+      });
+      toast.success("User info saved successfully!", {
+        autoClose: 2000,
+        hideProgressBar: true,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+    } catch (error) {
+      toast.error("Error saving user info!", {
+        autoClose: 2000,
+        hideProgressBar: true,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+    }
   };
 
   return (
@@ -110,17 +218,46 @@ export default function LinksComponent({ navState }: any) {
         {linkInputs.length > 0 && (
           <div className="absolute top-[25rem] left-[21rem] space-y-10">
             {linkInputs.map((input, index) => (
-              <div
+              <Link
+                href={input.inputValue}
                 key={index}
                 className={`${input.selectedOption.bgColor} text-white text-xs w-[230px] h-12 px-1 flex justify-between rounded-lg`}
               >
                 <div className="flex items-center gap-2">
                   <Image src={input.selectedOption.optionImg} alt="" />
-                  <p>{input.selectedOption.label}</p>
+                  <p
+                    className={`${
+                      input.selectedOption.label === "Frontend Mentor"
+                        ? "text-black"
+                        : ""
+                    }`}
+                  >
+                    {input.selectedOption.label}
+                  </p>
                 </div>
                 <Image src={arrowRight} alt="" />
-              </div>
+              </Link>
             ))}
+          </div>
+        )}
+        {backgroundImage && (
+          <div className="absolute top-28 left-[27rem]">
+            <Image
+              src={backgroundImage}
+              alt=""
+              width={96}
+              height={96}
+              className="rounded-full border-4 border-purple"
+            />
+          </div>
+        )}
+        {firstName && (
+          <div className="text-center absolute top-[17rem] left-[25rem]">
+            <div className="font-semibold text-lg text-darkGrey space-x-1">
+              <span>{firstName}</span>
+              <span>{lastName}</span>
+            </div>
+            <p className="text-regular text-sm text-grey">{email}</p>
           </div>
         )}
       </div>
@@ -178,17 +315,16 @@ export default function LinksComponent({ navState }: any) {
 
             <hr className="my-5" />
             <div className="flex justify-end">
-              {/* {linkInputs.map((input) => ( */}
               <button
-                // key={input.id}
                 onClick={saveToFirestore}
                 className={`${
-                  inputValue === "" ? "bg-lightPurple" : "bg-purple"
+                  linkInputs.some((input) => input.inputValue !== "")
+                    ? "bg-purple"
+                    : "bg-lightPurple"
                 } mt-5 flex text-white rounded-md border-2 py-2 px-3 hover:bg-purpleHover`}
               >
                 Save
               </button>
-              {/* ))} */}
             </div>
           </>
         )}
@@ -207,10 +343,34 @@ export default function LinksComponent({ navState }: any) {
                 Profile Picture
               </h3>
               <div className="flex flex-col md:flex-row md:items-center gap-20">
-                <div className="bg-lightPurple flex flex-col items-center py-10 px-5">
-                  <Image src={uploadIcon} alt="" />
-                  <button>Upload Image</button>
+                <div
+                  className="bg-lightPurple flex flex-col items-center py-10 px-5 cursor-pointer"
+                  onClick={handleDivClick}
+                  style={{
+                    backgroundImage: backgroundImage
+                      ? `url(${backgroundImage})`
+                      : "none",
+                    backgroundSize: "cover",
+                    backgroundPosition: "center",
+                  }}
+                >
+                  <input
+                    type="file"
+                    accept="image/png, image/jpeg, image/jpg"
+                    className="w-0 h-0 opacity-0"
+                    ref={fileInputRef}
+                    onChange={handleImageUpload}
+                  />
+                  <Image src={uploadIcon} alt="Upload Icon" />
+                  <button
+                    className={`${
+                      !backgroundImage ? "text-purple" : "text-white"
+                    } font-semibold`}
+                  >
+                    {!backgroundImage ? "+ Upload Image" : "Change Image"}
+                  </button>
                 </div>
+
                 <p className="text-start w-[17rem] text-grey">
                   Image must be below 1024x1024px. Use PNG or JPG format.
                 </p>
@@ -230,7 +390,9 @@ export default function LinksComponent({ navState }: any) {
                     type="text"
                     id="firstName"
                     placeholder="e.g. John"
-                    className="border-2 border-borders bg-white rounded-md w-full md:w-[30rem] p-2"
+                    className="border-2 border-borders bg-white rounded-md w-full md:w-[30rem] p-2 focus:outline-none focus:border-purple"
+                    value={firstName}
+                    onChange={(e) => setFirstName(e.target.value)}
                   />
                 </div>
                 <div className="flex flex-col md:flex-row md:items-center justify-between">
@@ -244,7 +406,9 @@ export default function LinksComponent({ navState }: any) {
                     type="text"
                     id="lastName"
                     placeholder="e.g. Appleseed"
-                    className="border-2 border-borders bg-white rounded-md w-full md:w-[30rem] p-2"
+                    className="border-2 border-borders bg-white rounded-md w-full md:w-[30rem] p-2 focus:outline-none focus:border-purple"
+                    value={lastName}
+                    onChange={(e) => setLastName(e.target.value)}
                   />
                 </div>
                 <div className="flex flex-col md:flex-row md:items-center justify-between">
@@ -258,7 +422,9 @@ export default function LinksComponent({ navState }: any) {
                     type="text"
                     id="email"
                     placeholder="e.g. email@example.com"
-                    className="border-2 border-borders bg-white rounded-md w-full md:w-[30rem] p-2"
+                    className="border-2 border-borders bg-white rounded-md w-full md:w-[30rem] p-2 focus:outline-none focus:border-purple"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
                   />
                 </div>
               </form>
@@ -267,11 +433,14 @@ export default function LinksComponent({ navState }: any) {
             <hr className="my-5" />
             <div className="flex justify-end">
               <button
+                onClick={saveUserInfoToFirestore}
                 className={`${
-                  inputValue === "" ? "bg-lightPurple" : "bg-purple"
+                  firstName && lastName && email
+                    ? "bg-purple"
+                    : "bg-lightPurple"
                 } mt-5 flex text-white rounded-md border-2 py-2 px-3 hover:bg-purpleHover`}
               >
-                lmao
+                Save
               </button>
             </div>
           </>

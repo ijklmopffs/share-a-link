@@ -112,7 +112,8 @@ export default function LinkDropdown({ handleOptionClick }: any) {
             handleOptionClick({
               label: "Frontend Mentor",
               logo: frontendmentor,
-              bgColor: "bg-white text-black",
+              bgColor: "bg-white",
+              optionImg: frontendmentor,
             })
           }
         >
