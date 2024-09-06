@@ -6,9 +6,11 @@ import logo from "@/public/assets/images/logo-devlinks-large.svg";
 import logoSmall from "@/public/assets/images/logo-devlinks-small.svg";
 import iconPreview from "@/public/assets/images/icon-preview-header.svg";
 import LinksComponent from "@/components/LinksComponent";
+import { useRouter } from "next/navigation";
 
 export default function Homepage() {
   const [navState, setNavState] = useState<string>("links");
+  const router = useRouter();
 
   const handleEventClick = (eventName: string) => {
     setNavState(eventName);
@@ -63,7 +65,10 @@ export default function Homepage() {
           </button>
         </div>
 
-        <button className="text-purple border-2 border-purple py-2 px-4 rounded-md font-semibold hover:bg-lightPurple">
+        <button
+          className="text-purple border-2 border-purple py-2 px-4 rounded-md font-semibold hover:bg-lightPurple"
+          onClick={() => router.push("/preview")}
+        >
           <span className="hidden md:inline-block">Preview</span>
           <Image src={iconPreview} alt="" className="md:hidden" />
         </button>

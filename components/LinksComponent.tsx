@@ -146,51 +146,44 @@ export default function LinksComponent({ navState }: any) {
     });
   };
 
-  const saveToFirestore = (e: React.MouseEvent<HTMLButtonElement>) => {
+  const saveUserInfoToFirestore = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
 
-    linkInputs.forEach((input) => {
-      addDoc(collection(db, "users"), {
+    if (
+      !firstName ||
+      !lastName ||
+      !email ||
+      !backgroundImage ||
+      linkInputs.some(
+        (input) => !input.inputValue || !input.selectedOption.label
+      )
+    ) {
+      toast.error("Please add some links and set up your profile!", {
+        autoClose: 2000,
+        hideProgressBar: true,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+      return;
+    }
+
+    const userData = {
+      firstName,
+      lastName,
+      email,
+      backgroundImage,
+      links: linkInputs.map((input) => ({
         selectedOption: input.selectedOption.label,
-        logo: input.selectedOption.logo,
+        optionImg: input.selectedOption.optionImg,
         inputValue: input.inputValue,
-      })
-        .then((docRef) => {
-          console.log("Document written with ID: ", docRef.id);
-          toast.success("Link has been saved successfully!", {
-            autoClose: 2000,
-            hideProgressBar: true,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-          });
-        })
-        .catch((error) => {
-          console.error("Error adding document: ", error);
-          toast.error("Error saving links!", {
-            autoClose: 2000,
-            hideProgressBar: true,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-          });
-        });
-    });
-  };
-
-  const saveUserInfoToFirestore = async (
-    e: React.MouseEvent<HTMLButtonElement>
-  ) => {
-    e.preventDefault();
+        bgColor: input.selectedOption.bgColor,
+      })),
+    };
 
     try {
-      await addDoc(collection(db, "user"), {
-        firstName,
-        lastName,
-        email,
-      });
+      addDoc(collection(db, "user"), userData);
       toast.success("User info saved successfully!", {
         autoClose: 2000,
         hideProgressBar: true,
@@ -312,20 +305,6 @@ export default function LinksComponent({ navState }: any) {
                 ))}
               </div>
             )}
-
-            <hr className="my-5" />
-            <div className="flex justify-end">
-              <button
-                onClick={saveToFirestore}
-                className={`${
-                  linkInputs.some((input) => input.inputValue !== "")
-                    ? "bg-purple"
-                    : "bg-lightPurple"
-                } mt-5 flex text-white rounded-md border-2 py-2 px-3 hover:bg-purpleHover`}
-              >
-                Save
-              </button>
-            </div>
           </>
         )}
 
@@ -429,22 +408,19 @@ export default function LinksComponent({ navState }: any) {
                 </div>
               </form>
             </div>
-
-            <hr className="my-5" />
-            <div className="flex justify-end">
-              <button
-                onClick={saveUserInfoToFirestore}
-                className={`${
-                  firstName && lastName && email
-                    ? "bg-purple"
-                    : "bg-lightPurple"
-                } mt-5 flex text-white rounded-md border-2 py-2 px-3 hover:bg-purpleHover`}
-              >
-                Save
-              </button>
-            </div>
           </>
         )}
+        <hr className="my-5" />
+        <div className="flex justify-end">
+          <button
+            onClick={saveUserInfoToFirestore}
+            className={`${
+              firstName && lastName && email ? "bg-purple" : "bg-lightPurple"
+            } mt-5 flex text-white rounded-md border-2 py-2 px-3 hover:bg-purpleHover`}
+          >
+            Save
+          </button>
+        </div>
       </div>
     </main>
   );
